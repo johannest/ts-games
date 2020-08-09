@@ -1,0 +1,6 @@
+#starship-ts-view {
+    display: block;
+}
+:host {
+    display: block;
+}

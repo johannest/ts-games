@@ -1,0 +1,58 @@
+import {LitElement, html, customElement, css} from 'lit-element';
+
+@customElement('fuel-indicator')
+export class FuelIndicator extends LitElement {
+    static get styles() {
+        return css`
+          :host {
+            display: block;
+            position: absolute;
+            transform: none;
+          }
+          svg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            transform: translate(440px,25px);
+          }`;
+    }
+
+    value = 100;
+
+    render() {
+        return html`
+            <svg id="fuelRect" width="40" height="100">
+                <defs>
+                  <linearGradient id="glossGradient" x1="0" x2="0" y1="0" y2="1">
+                      <stop offset="0%"  stop-color="fill:rgb(0,0,0)" stop-opacity="0.2" />
+                      <stop offset="30%"  stop-color="fill:rgb(0,0,0)" stop-opacity="0.05" />
+                      <stop offset="100%"  stop-color="fill:rgb(0,0,0)" stop-opacity="0.15" />
+                  </linearGradient>
+                </defs>
+        
+                <rect x="0" width="40" height="100" style="fill:rgba(255,255,255,1);stroke-width:2;stroke:rgb(0,0,0)" />
+                <rect x="0" width="40" height="100" fill="url(#glossGradient)" style="stroke-width:2;stroke:rgb(0,0,0)" />
+                <rect id="fuelBar" x="3" y="2" width="34" height="98" transform="scale(1,1)" style="fill:rgba(0,255,0,0.5);stroke-width:0;stroke:rgb(0,0,0)" />
+                <line stroke-dasharray="1, 3" x1="0" y1="25" x2="40" y2="25" style="stroke-width:1;stroke:rgba(0,0,0,0.7)" />
+                <line stroke-dasharray="2, 3" x1="0" y1="50" x2="40" y2="50" style="stroke-width:1;stroke:rgba(0,0,0,0.7)" />
+                <line stroke-dasharray="1, 3" x1="0" y1="75" x2="40" y2="75" style="stroke-width:1;stroke:rgba(0,0,0,0.7)" />
+                <text x="5" y="15" fill="black" transform="rotate(90,0,30)">Fuel</text>
+            </svg>
+        `;
+    }
+
+    setValue(newValue: number) {
+        this.value = newValue;
+        this.updateFuel();
+    }
+
+    updateFuel() {
+        var fuelBar: any = this.shadowRoot!.querySelector('#fuelBar');
+        if (fuelBar != null) {
+            var newScale = this.value / 100;
+            var cY = fuelBar.getBBox().y + (fuelBar.getBBox().height);
+            var dY = -cY * (newScale - 1);
+            fuelBar.setAttribute("transform", "translate(0," + dY + ") scale(1," + newScale + ")");
+        }
+    }
+}
